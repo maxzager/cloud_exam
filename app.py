@@ -3,6 +3,7 @@ from dash import dcc, html
 from dash.dependencies import Input, Output
 from scrap import MeffScraper
 import plotly.graph_objs as go
+import os
 
 url = 'https://www.meff.es/esp/Derivados-Financieros/Ficha/FIEM_MiniIbex_35'
 scraper = MeffScraper(url)
@@ -68,4 +69,4 @@ def update_graph(selected_date):
     return {'data': [call_trace, put_trace], 'layout': layout}
 
 if __name__ == '__main__':
-    app.run_server(port=8080)
+    app.run_server(host="0.0.0.0", port=os.getenv("PORT", 8080))
