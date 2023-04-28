@@ -69,4 +69,4 @@ def update_graph(selected_date):
     return {'data': [call_trace, put_trace], 'layout': layout}
 
 if __name__ == '__main__':
-    app.run_server(host="0.0.0.0", port=os.getenv("PORT", 8080))
+    app.run_server(os.getenv("HOST", "0.0.0.0"), port=os.getenv("PORT", 8080))

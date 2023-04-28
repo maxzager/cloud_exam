@@ -1,5 +1,7 @@
 FROM python:3.8-slim
 
+RUN pip install --upgrade pip
+
 WORKDIR /code
 
 COPY requirements.txt .
