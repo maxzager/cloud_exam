@@ -3,7 +3,8 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
 import datetime
-import mibian
+import calculate_iv as iv
+
 
 class MeffScraper:
     def __init__(self, url):
@@ -53,21 +54,14 @@ class MeffScraper:
         self.options_new["STRIKE"] = self.options_new["STRIKE"].str.replace(".", "", regex=False).str.replace(",", ".", regex=False)
         self.options_new["ANT"] = pd.to_numeric(self.options_new["ANT"], errors='coerce')
         self.options_new["STRIKE"] = pd.to_numeric(self.options_new["STRIKE"], errors='coerce')
-        self.options_new["IV"] = self.options_new.apply(lambda row: MeffScraper.calculate_iv(row, self.futuros), axis=1)
+        self.options_new["IV"] = self.options_new.apply(lambda row: iv.calculate_iv(row, self.futuros), axis=1)
         self.options_new["EXP_DATE"] = self.options_new["EXP_DATE"].dt.strftime('%Y-%m-%d')
         #classify options as call or put
         self.options_new["CALL_PUT"] = np.where(self.options_new["DATA-TIPO"].str[1] == "C", "CALL", "PUT")
-
-
-    @staticmethod
-    def calculate_iv(row, futuros):
-        if row["DTE"] > 0:
-            return mibian.BS([futuros, row["STRIKE"], 0, row["DTE"]], callPrice=row["ANT"]).impliedVolatility
-        else:
-            return np.nan
 
     def run(self):
         self.fetch_data()
         self.extract_futures()
         self.extract_options()
         self.process_options()
+
