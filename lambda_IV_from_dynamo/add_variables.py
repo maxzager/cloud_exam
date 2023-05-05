@@ -15,7 +15,7 @@ class adding_variables:
         self.options = self.options.loc[~self.options['ANT'].str.contains('–|-', regex=True)].copy()
         self.options.loc[:, "EXP_DATE"] = self.options["DATA-TIPO"].str[3:11]
         self.options["EXP_DATE"] = pd.to_datetime(self.options["EXP_DATE"], format='%Y%m%d')
-        self.options.loc[:, "DTE"] = (self.options["EXP_DATE"].dt.date - datetime.date.today()).dt.days
+        self.options.loc[:, "DTE"] = (self.options["EXP_DATE"] - pd.Timestamp.today()).dt.days
         self.options.loc[:, "ANT"] = self.options["ANT"].str.replace(".", "", regex=False).str.replace(",", ".", regex=False)
         self.options.loc[:, "STRIKE"] = self.options["STRIKE"].str.replace(".", "", regex=False).str.replace(",", ".", regex=False)
         self.options["ANT"] = pd.to_numeric(self.options["ANT"], errors='coerce')
