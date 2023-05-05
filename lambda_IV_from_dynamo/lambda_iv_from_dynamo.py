@@ -17,7 +17,7 @@ def convert_floats_to_decimals(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def calculate_variables_and_store(event,context): 
+def calculate_variables_and_store(event=None, context=None): 
     today = datetime.today().strftime('%Y-%m-%d')
     response = table.get_item(Key={'Date': today})
     data = response.get('Item', None)
