@@ -127,7 +127,7 @@ def update_graph(selected_exp_date, selected_date, comparison_mode, comparison_d
             traces += get_traces(selected_date, comparison_date, ('rgba(0, 80, 0, .8)', 'rgba(80, 0, 80, .8)'), comparison_date)
     
     layout = go.Layout(
-        title='Volatility Smile',
+        title='Volatility Skew calculated for Meff Options',
         xaxis=dict(title='Strike', titlefont=dict(family='Verdana', color='#2A3F5F'), tickfont=dict(family='Verdana', color='#2A3F5F')),
         yaxis=dict(title='Implied Volatility', titlefont=dict(family='Verdana', color='#2A3F5F'), tickfont=dict(family='Verdana', color='#2A3F5F')),
         hovermode='closest',
