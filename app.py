@@ -4,34 +4,26 @@ from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 import os
 import boto3
-import pandas as pd
+from aws_handler import get_unique_dates, get_item
 
-dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
+aws_access_key_id = os.environ.get("aws_access_key_id")
+aws_secret_access_key = os.environ.get("aws_secret_access_key")
+
+dynamodb = boto3.resource(
+    "dynamodb",
+    aws_access_key_id=aws_access_key_id,
+    aws_secret_access_key=aws_secret_access_key,
+    region_name="eu-central-1"
+)
+
+
+dynamodb = boto3.resource(
+    "dynamodb",
+    aws_access_key_id=aws_access_key_id,
+    aws_secret_access_key=aws_secret_access_key,
+    region_name="eu-central-1"
+)
 table = dynamodb.Table('MeffScrapping')
-
-
-def get_unique_dates(table):
-    unique_dates = set()
-    response = table.scan()
-    for item in response['Items']:
-        unique_dates.add(item['Date'])
-    while 'LastEvaluatedKey' in response:
-        response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
-        for item in response['Items']:
-            unique_dates.add(item['Date'])
-    return unique_dates
-
-def get_item(table, date):
-    response = table.get_item(
-        Key={
-            'Date': date
-        }
-    )
-    item = response.get('Item')
-    if item:
-        return pd.DataFrame(item["Options"])
-    return pd.DataFrame()
-
 unique_dates = get_unique_dates(table)
 
 app = dash.Dash(__name__)
