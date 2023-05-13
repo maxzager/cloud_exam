@@ -69,6 +69,17 @@ app.layout = html.Div([
 ])
 
 def interpolate_iv(options_new, moneyness, ttm):
+    """
+    Performs interpolation of implied volatility (IV) to create the volatility surface.
+
+    Args:
+        options_new (DataFrame): DataFrame with options pricing and volatility.
+        moneyness (np.array): Array of moneyness values for the options.
+        ttm (np.array): Array of time-to-maturity values for the options.
+
+    Returns:
+        xi, yi, zi (np.arrays): Meshgrid arrays for moneyness, time-to-maturity, and interpolated IV.
+    """
     x = options_new['MONEYNES']
     y = options_new['TTM']
     z = options_new['IV']
@@ -84,6 +95,18 @@ def interpolate_iv(options_new, moneyness, ttm):
      Input('comparison-mode', 'value'),
      Input('comparison-date-dropdown', 'value')])
 def update_graph(selected_exp_date, selected_date, comparison_mode, comparison_date):
+    """
+    Callback for updating the volatility smile graph.
+
+    Args:
+        selected_exp_date (str): The selected expiration date.
+        selected_date (str): The selected data collection date.
+        comparison_mode (str): The selected comparison mode.
+        comparison_date (str): The selected comparison date.
+
+    Returns:
+        dict: A dictionary containing the updated data and layout for the graph.
+    """
 
     def get_traces(selected_date, selected_exp_date, trace_color, comparison_label):
         options_new = get_item(table, selected_date)
@@ -139,7 +162,15 @@ def update_graph(selected_exp_date, selected_date, comparison_mode, comparison_d
     Output('call-volatility-surface-graph', 'figure'),
     [Input('data-collection-date-dropdown', 'value')])
 def update_call_vol_surface(selected_date):
+    """
+    Callback for updating the call volatility surface graph.
 
+    Args:
+        selected_date (str): The selected data collection date.
+
+    Returns:
+        dict: A dictionary containing the updated data and layout for the graph.
+    """
     options_new = get_item(table, selected_date)
     filtered_options = options_new[options_new['CALL_PUT'] == 'CALL']
 
@@ -171,7 +202,15 @@ def update_call_vol_surface(selected_date):
     Output('put-volatility-surface-graph', 'figure'),
     [Input('data-collection-date-dropdown', 'value')])
 def update_put_vol_surface(selected_date):
+    """
+    Callback for updating the put volatility surface graph.
 
+    Args:
+        selected_date (str): The selected data collection date.
+
+    Returns:
+        dict: A dictionary containing the updated data and layout for the graph.
+    """
     options_new = get_item(table, selected_date)
     filtered_options = options_new[options_new['CALL_PUT'] == 'PUT']
 
@@ -205,6 +244,15 @@ def update_put_vol_surface(selected_date):
      Output('exp-date-dropdown', 'value')],
     [Input('data-collection-date-dropdown', 'value')])
 def update_exp_date_dropdown(selected_date):
+    """
+    Callback for updating the expiration date dropdown options.
+
+    Args:
+        selected_date (str): The selected data collection date.
+
+    Returns:
+        tuple: A tuple containing the options and value for the expiration date dropdown.
+    """
     options_df = get_item(table, selected_date)
     unique_exp_dates = options_df['EXP_DATE'].unique()
     options = [{'label': exp_date, 'value': exp_date} for exp_date in unique_exp_dates]
@@ -218,6 +266,17 @@ def update_exp_date_dropdown(selected_date):
      Input('data-collection-date-dropdown', 'value'),
      Input('exp-date-dropdown', 'value')])
 def update_comparison_date_dropdown(comparison_mode, selected_date, selected_exp_date):
+    """
+    Callback for updating the comparison date dropdown options.
+
+    Args:
+        comparison_mode (str): The selected comparison mode.
+        selected_date (str): The selected data collection date.
+        selected_exp_date (str): The selected expiration date.
+
+    Returns:
+        tuple: A tuple containing the options and value for the comparison date dropdown.
+    """
     if comparison_mode == 'collection':
         options = [{'label': date, 'value': date} for date in unique_dates if date != selected_date]
         default_value = options[0]['value'] if len(options) > 0 else None

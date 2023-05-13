@@ -13,10 +13,16 @@ class MeffScraper:
         self.options = None
         
     def fetch_data(self):
+        """
+        Fetch the webpage content.
+        """
         self.response = requests.get(self.url)
         self.soup = BeautifulSoup(self.response.content, 'html.parser')
 
     def extract_futures(self):
+        """
+        Extract futures data from the webpage content.
+        """
         fut_table = self.soup.find('table', {'id': 'Contenido_Contenido_tblFuturos'})
         self.futuros = pd.read_html(str(fut_table))[0]
         self.futuros.columns = self.futuros.columns.droplevel(1)
@@ -24,6 +30,9 @@ class MeffScraper:
         self.futuros = float(self.futuros.replace('.', '').replace(',', '.'))
 
     def extract_options(self):
+        """
+        Extract options data from the webpage content.
+        """
         trs_ope = self.soup.find_all('tr', attrs={'data-tipo': lambda x: x and x.startswith('OPE')})
         trs_oce = self.soup.find_all('tr', attrs={'data-tipo': lambda x: x and x.startswith('OCE')})
         trs = trs_ope + trs_oce
@@ -42,6 +51,9 @@ class MeffScraper:
         self.options = pd.DataFrame(rows)
 
     def run(self):
+        """
+        Execute the scraping process.
+        """
         self.fetch_data()
         self.extract_futures()
         self.extract_options()

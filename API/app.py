@@ -19,6 +19,16 @@ table = dynamodb.Table('MeffScrapping')
 
 #Functions
 def get_unique_dates(table):
+    """
+    Fetches and returns the partition Key from a DynamoDB table, that uses "Date"
+    as a partition key.
+
+    Args:
+        table: A DynamoDB table.
+
+    Returns:
+        set: A set containing the partition keys.
+    """
     unique_dates = set()
     response = table.scan()
     for item in response['Items']:
@@ -31,6 +41,16 @@ def get_unique_dates(table):
 
 
 def get_item(table, date):
+    """
+    Retrieves an item from a DynamoDB table based on a given date.
+
+    Args:
+        table (boto3.resources.factory.dynamodb.Table): A DynamoDB table.
+        date (str): The date for which to fetch the item.
+
+    Returns:
+        dict: The item corresponding to the given date.
+    """
     response = table.get_item(
         Key={
             'Date': date
@@ -40,6 +60,18 @@ def get_item(table, date):
     return item
 
 def decimal_to_float(obj):
+    """
+    Converts a Decimal object to a float.
+
+    Args:
+        obj (Decimal): The Decimal object to convert.
+
+    Returns:
+        float: The float representation of the Decimal object.
+
+    Raises:
+        TypeError: If the object is not of type Decimal.
+    """
     if isinstance(obj, Decimal):
         return float(obj)
     raise TypeError("Type not serializable")
@@ -47,6 +79,12 @@ def decimal_to_float(obj):
 #Routes
 @app.route("/", methods=["GET"])
 def welcome():
+    """
+    Defines the home route that provides API documentation.
+
+    Returns:
+        str: A string containing HTML-formatted API documentation.
+    """
     documentation = """
     <strong>Welcome to the Meff Scrapping API.</strong> 
     The following endpoints are available:
@@ -80,16 +118,35 @@ def welcome():
 
 @app.route("/ping", methods=["GET"])
 def ping():
+    """
+    Defines the /ping route that checks the API status.
+
+    Returns:
+        Response: A Flask Response object containing a JSON with the status of the API.
+    """
     return jsonify({"status": "ok"})
 
 @app.route('/get_partitions', methods=['GET'])
 def unique_dates():
+    """
+    Defines the /get_partitions route that fetches the partition keys from the DynamoDB table.
+
+    Returns:
+        Response: A Flask Response object containing a JSON with the list of partition keys.
+    """
     dates = get_unique_dates(table)
     return jsonify(list(dates))
 
 
 @app.route("/get_item", methods=["GET"])
 def get_item_route():
+    """
+    Defines the /get_item route that fetches an item from the DynamoDB table based on a given date.
+
+    Returns:
+        Response: A Flask Response object containing a JSON with the fetched item.
+        If the date parameter is not provided, returns a JSON with an error message.
+    """
     date = request.args.get("date")
     if date:
         # Implementa la función para obtener el ítem según la fecha
